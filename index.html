@@ -3,376 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎵 音乐参数生成器</title>
+    <title>🌱 土壤参数音乐生成器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #e0e0e0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #fff;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .card {
-            background: rgba(30, 30, 50, 0.9);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-            border: 1px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .param-group {
-            margin-bottom: 25px;
-        }
-
-        .param-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .param-label h3 {
-            color: #e0e0e0;
-            font-size: 1.1rem;
-        }
-
-        .param-value {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
-            border: 3px solid #667eea;
-        }
-
-        .select-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-
-        .select-btn {
-            padding: 12px 16px;
-            border: 2px solid #404060;
-            border-radius: 10px;
-            background: rgba(40, 40, 60, 0.8);
-            color: #e0e0e0;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.95rem;
-            text-align: center;
-        }
-
-        .select-btn:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.2);
-        }
-
-        .select-btn.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
-        }
-
-        .copy-btn {
-            width: 100%;
-            padding: 18px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
-        }
-
-        .preview-box {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            background: rgba(20, 20, 40, 0.9);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .preview-title {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .preview-content {
-            color: #b0b0b0;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 10px;
-            word-wrap: break-word;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-        }
-
-        .toast.show {
-            opacity: 1;
-        }
-
-        .instructions {
-            background: rgba(40, 60, 80, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-
-        .instructions h4 {
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .instructions ol {
-            margin-left: 20px;
-            line-height: 1.8;
-            color: #b0b0b0;
-        }
-
-        .instructions li {
-            margin-bottom: 5px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a3c2a 0%, #0d2818 50%, #1a4d1a 100%); min-height: 100vh; padding: 20px; color: #e0e0e0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; color: #4ade80; font-size: 2.2rem; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #86efac; margin-bottom: 30px; }
+        .card { background: rgba(20, 40, 30, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); margin-bottom: 20px; border: 1px solid rgba(74, 222, 128, 0.3); }
+        .section-title { color: #4ade80; font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .params-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .param-group { background: rgba(30, 50, 40, 0.8); padding: 20px; border-radius: 15px; border: 1px solid rgba(74, 222, 128, 0.2); }
+        .param-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .param-name { color: #86efac; font-weight: bold; font-size: 0.95rem; }
+        .param-value { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85rem; }
+        .param-unit { color: #9ca3af; font-size: 0.8rem; margin-bottom: 8px; }
+        input[type="range"] { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #22c55e, #16a34a); outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(34, 197, 94, 0.8); border: 3px solid #22c55e; }
+        input[type="number"] { width: 100%; padding: 10px 15px; border: 2px solid rgba(74, 222, 128, 0.3); border-radius: 10px; background: rgba(20, 40, 30, 0.8); color: #e0e0e0; font-size: 1rem; margin-top: 8px; }
+        input[type="number"]:focus { outline: none; border-color: #22c55e; }
+        .manual-input { margin-top: 10px; }
+        .manual-input label { display: block; color: #9ca3af; font-size: 0.85rem; margin-bottom: 5px; }
+        .actions-row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 150px; padding: 14px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.6); }
+        .btn-secondary { background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 2px solid #22c55e; }
+        .btn-secondary:hover { background: rgba(74, 222, 128, 0.3); }
+        .preview-box { background: rgba(10, 30, 20, 0.9); border: 2px solid rgba(74, 222, 128, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .preview-title { color: #4ade80; font-weight: bold; margin-bottom: 15px; font-size: 1rem; }
+        .preview-content { color: #d1d5db; font-size: 0.95rem; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; min-height: 120px; font-family: 'Georgia', serif; font-style: italic; }
+        .copy-btn { width: 100%; padding: 16px; font-size: 1.1rem; font-weight: bold; color: white; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s; margin-top: 15px; }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5); }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 15px 30px; border-radius: 10px; font-weight: bold; opacity: 0; transition: opacity 0.3s; z-index: 1000; }
+        .toast.show { opacity: 1; }
+        .file-upload { background: rgba(30, 50, 40, 0.8); padding: 25px; border-radius: 15px; border: 2px dashed rgba(74, 222, 128, 0.4); text-align: center; margin-bottom: 20px; cursor: pointer; transition: all 0.3s; }
+        .file-upload:hover { border-color: #22c55e; background: rgba(40, 60, 50, 0.8); }
+        .file-upload input { display: none; }
+        .file-upload-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .file-upload-text { color: #86efac; font-weight: bold; margin-bottom: 5px; }
+        .file-upload-hint { color: #9ca3af; font-size: 0.85rem; }
+        .file-info { background: rgba(34, 197, 94, 0.1); padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid rgba(74, 222, 128, 0.3); display: none; }
+        .file-info.show { display: block; }
+        .file-info-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        .file-info-content { color: #d1d5db; font-size: 0.9rem; line-height: 1.6; }
+        .instructions { background: rgba(40, 60, 50, 0.8); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid #22c55e; }
+        .instructions h4 { color: #4ade80; margin-bottom: 12px; }
+        .instructions ol { margin-left: 20px; line-height: 1.8; color: #d1d5db; }
+        .instructions li { margin-bottom: 8px; }
+        .style-select { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .style-btn { padding: 12px 16px; border: 2px solid #22c55e; border-radius: 10px; background: rgba(34, 197, 94, 0.1); color: #86efac; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; text-align: center; }
+        .style-btn:hover { background: rgba(34, 197, 94, 0.2); }
+        .style-btn.active { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 音乐参数生成器</h1>
+        <h1>🌱 土壤参数音乐生成器</h1>
+        <p class="subtitle">将土壤生理数据转化为独特的音乐叙事</p>
         
         <div class="card">
             <div class="instructions">
                 <h4>📋 使用说明</h4>
                 <ol>
-                    <li>调整下方参数（音乐风格、情绪等）</li>
-                    <li>点击"复制生成指令"按钮</li>
-                    <li>打开 <a href="https://suno.ai" target="_blank" style="color:#667eea;">suno.ai</a> 并粘贴到输入框</li>
+                    <li><strong>手动输入</strong>：调整滑块或直接输入具体数值</li>
+                    <li><strong>文件导入</strong>：上传 CSV/JSON 文件批量导入数据</li>
+                    <li>选择音乐风格，点击生成指令</li>
+                    <li>复制生成的描述，粘贴到 Suno AI 生成音乐</li>
                 </ol>
             </div>
 
-            <!-- BPM -->
-            <div class="param-group">
-                <div class="param-label">
-                    <h3>🎵 节拍速度 (BPM)</h3>
-                    <span class="param-value" id="bpmValue">120 BPM</span>
-                </div>
-                <input type="range" id="bpm" min="60" max="200" value="120" oninput="updateBPM()">
-            </div>
-
-            <!-- 情绪 -->
-            <div class="param-group">
-                <div class="param-label">
-                    <h3>🎭 音乐情绪</h3>
-                </div>
-                <div class="select-grid" id="moodGrid">
-                    <button class="select-btn active" onclick="selectMood('欢快', this)">😊 欢快</button>
-                    <button class="select-btn" onclick="selectMood('平静', this)">😌 平静</button>
-                    <button class="select-btn" onclick="selectMood('悲伤', this)">😢 悲伤</button>
-                    <button class="select-btn" onclick="selectMood('浪漫', this)">💕 浪漫</button>
-                    <button class="select-btn" onclick="selectMood('紧张', this)">😰 紧张</button>
-                    <button class="select-btn" onclick="selectMood('激励', this)">💪 激励</button>
-                    <button class="select-btn" onclick="selectMood('神秘', this)">🔮 神秘</button>
-                    <button class="select-btn" onclick="selectMood('梦幻', this)">✨ 梦幻</button>
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" accept=".csv,.json" onchange="handleFileUpload(event)">
+                <div class="file-upload-icon">📁</div>
+                <div class="file-upload-text">点击或拖拽上传数据文件</div>
+                <div class="file-upload-hint">支持 CSV 和 JSON 格式</div>
+                <div class="file-info" id="fileInfo">
+                    <div class="file-info-title">✅ 文件已加载</div>
+                    <div class="file-info-content" id="fileInfoContent"></div>
                 </div>
             </div>
 
-            <!-- 乐器 -->
-            <div class="param-group">
-                <div class="param-label">
-                    <h3>🎸 主要乐器</h3>
+            <div class="section-title">📊 土壤参数设置</div>
+            
+            <div class="params-grid">
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">🌡️ 土壤温度</span>
+                        <span class="param-value" id="tempValue">25°C</span>
+                    </div>
+                    <div class="param-unit">范围: 5°C - 45°C</div>
+                    <input type="range" id="temp" min="5" max="45" value="25" step="0.5" oninput="updateParam('temp')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="tempInput" min="5" max="45" value="25" step="0.5" onchange="updateFromInput('temp')">
+                    </div>
                 </div>
-                <div class="select-grid" id="instrumentGrid">
-                    <button class="select-btn active" onclick="selectInstrument('钢琴', this)">🎹 钢琴</button>
-                    <button class="select-btn" onclick="selectInstrument('吉他', this)">🎸 吉他</button>
-                    <button class="select-btn" onclick="selectInstrument('电子', this)">🎛️ 电子</button>
-                    <button class="select-btn" onclick="selectInstrument('小提琴', this)">🎻 小提琴</button>
-                    <button class="select-btn" onclick="selectInstrument('鼓', this)">🥁 鼓</button>
-                    <button class="select-btn" onclick="selectInstrument('管弦乐', this)">🎼 管弦乐</button>
-                    <button class="select-btn" onclick="selectInstrument('混合', this)">🎹+🎸 混合</button>
-                    <button class="select-btn" onclick="selectInstrument('自然', this)">🍃 自然</button>
+
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">💧 土壤湿度</span>
+                        <span class="param-value" id="moistureValue">50%</span>
+                    </div>
+                    <div class="param-unit">范围: 10% - 90%</div>
+                    <input type="range" id="moisture" min="10" max="90" value="50" step="1" oninput="updateParam('moisture')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="moistureInput" min="10" max="90" value="50" step="1" onchange="updateFromInput('moisture')">
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">⚡ 电导率</span>
+                        <span class="param-value" id="ecValue">2.0 mS/cm</span>
+                    </div>
+                    <div class="param-unit">范围: 0.1 - 5.0 mS/cm</div>
+                    <input type="range" id="ec" min="0.1" max="5" value="2.0" step="0.1" oninput="updateParam('ec')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="ecInput" min="0.1" max="5" value="2.0" step="0.1" onchange="updateFromInput('ec')">
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">🧪 氮含量 (N)</span>
+                        <span class="param-value" id="nitrogenValue">50 mg/kg</span>
+                    </div>
+                    <div class="param-unit">范围: 10 - 200 mg/kg</div>
+                    <input type="range" id="nitrogen" min="10" max="200" value="50" step="1" oninput="updateParam('nitrogen')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="nitrogenInput" min="10" max="200" value="50" step="1" onchange="updateFromInput('nitrogen')">
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">🧪 磷含量 (P)</span>
+                        <span class="param-value" id="phosphorusValue">30 mg/kg</span>
+                    </div>
+                    <div class="param-unit">范围: 5 - 100 mg/kg</div>
+                    <input type="range" id="phosphorus" min="5" max="100" value="30" step="1" oninput="updateParam('phosphorus')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="phosphorusInput" min="5" max="100" value="30" step="1" onchange="updateFromInput('phosphorus')">
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <div class="param-header">
+                        <span class="param-name">🧪 钾含量 (K)</span>
+                        <span class="param-value" id="potassiumValue">150 mg/kg</span>
+                    </div>
+                    <div class="param-unit">范围: 50 - 400 mg/kg</div>
+                    <input type="range" id="potassium" min="50" max="400" value="150" step="1" oninput="updateParam('potassium')">
+                    <div class="manual-input">
+                        <label>或直接输入:</label>
+                        <input type="number" id="potassiumInput" min="50" max="400" value="150" step="1" onchange="updateFromInput('potassium')">
+                    </div>
                 </div>
             </div>
 
-            <!-- 时长 -->
-            <div class="param-group">
-                <div class="param-label">
-                    <h3>⏱️ 音乐时长</h3>
-                    <span class="param-value" id="durationValue">1 分钟</span>
-                </div>
-                <input type="range" id="duration" min="15" max="180" value="60" step="15" oninput="updateDuration()">
+            <div class="section-title">🎵 音乐风格选择</div>
+            <div class="style-select">
+                <button class="style-btn active" onclick="selectStyle('documentary', this)">🎬 自然纪录片</button>
+                <button class="style-btn" onclick="selectStyle('ambient', this)">🌿 环境氛围</button>
+                <button class="style-btn" onclick="selectStyle('cinematic', this)">🎥 电影配乐</button>
+                <button class="style-btn" onclick="selectStyle('minimal', this)">🪨 极简主义</button>
             </div>
 
-            <!-- 音高 -->
-            <div class="param-group">
-                <div class="param-label">
-                    <h3>🎤 音高范围</h3>
-                </div>
-                <div class="select-grid" id="pitchGrid">
-                    <button class="select-btn" onclick="selectPitch('低音', this)">🔈 低音</button>
-                    <button class="select-btn active" onclick="selectPitch('中音', this)">🔊 中音</button>
-                    <button class="select-btn" onclick="selectPitch('高音', this)">🔉 高音</button>
-                    <button class="select-btn" onclick="selectPitch('超高音', this)">🎤 超高音</button>
-                </div>
+            <div class="actions-row">
+                <button class="btn btn-primary" onclick="generatePrompt()">🎵 生成音乐指令</button>
+                <button class="btn btn-secondary" onclick="resetParams()">🔄 重置参数</button>
             </div>
 
-            <!-- 预览 -->
             <div class="preview-box">
-                <div class="preview-title">📝 生成指令预览</div>
-                <div class="preview-content" id="previewText">
-                    Pure instrumental music, 120 BPM, 欢快情绪, 钢琴主奏, 中音区域, 1分钟时长
-                </div>
+                <div class="preview-title">📝 生成的音乐描述</div>
+                <div class="preview-content" id="promptOutput">Professional nature documentary soundtrack with progressive acoustic structure. Your soil data will be transformed into a unique musical narrative...</div>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 复制到剪贴板</button>
             </div>
-
-            <!-- 复制按钮 -->
-            <button class="copy-btn" onclick="copyToClipboard()">
-                📋 复制生成指令
-            </button>
         </div>
     </div>
 
     <div class="toast" id="toast">✅ 已复制到剪贴板！</div>
 
     <script>
-        let currentMood = '欢快';
-        let currentInstrument = '钢琴';
-        let currentPitch = '中音';
+        let currentStyle = 'documentary';
+        let soilData = { temp: 25, moisture: 50, ec: 2.0, nitrogen: 50, phosphorus: 30, potassium: 150 };
 
-        function updateBPM() {
-            const bpm = document.getElementById('bpm').value;
-            document.getElementById('bpmValue').textContent = bpm + ' BPM';
-            updatePreview();
+        function updateParam(param) {
+            const slider = document.getElementById(param);
+            const value = parseFloat(slider.value);
+            soilData[param] = value;
+            document.getElementById(param + 'Value').textContent = formatValue(param, value);
+            document.getElementById(param + 'Input').value = value;
         }
 
-        function updateDuration() {
-            const duration = document.getElementById('duration').value;
-            const minutes = Math.floor(duration / 60);
-            const seconds = duration % 60;
-            let displayText = '';
-            if (minutes > 0 && seconds > 0) {
-                displayText = minutes + ' 分 ' + seconds + ' 秒';
-            } else if (minutes > 0) {
-                displayText = minutes + ' 分钟';
-            } else {
-                displayText = seconds + ' 秒';
+        function updateFromInput(param) {
+            const input = document.getElementById(param + 'Input');
+            const value = parseFloat(input.value);
+            soilData[param] = value;
+            document.getElementById(param).value = value;
+            document.getElementById(param + 'Value').textContent = formatValue(param, value);
+        }
+
+        function formatValue(param, value) {
+            switch(param) {
+                case 'temp': return value + '°C';
+                case 'moisture': return value + '%';
+                case 'ec': return value.toFixed(1) + ' mS/cm';
+                case 'nitrogen': return value + ' mg/kg';
+                case 'phosphorus': return value + ' mg/kg';
+                case 'potassium': return value + ' mg/kg';
+                default: return value;
             }
-            document.getElementById('durationValue').textContent = displayText;
-            updatePreview();
         }
 
-        function selectMood(mood, btn) {
-            currentMood = mood;
-            document.querySelectorAll('#moodGrid .select-btn').forEach(b => b.classList.remove('active'));
+        function selectStyle(style, btn) {
+            currentStyle = style;
+            document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            updatePreview();
         }
 
-        function selectInstrument(instrument, btn) {
-            currentInstrument = instrument;
-            document.querySelectorAll('#instrumentGrid .select-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            updatePreview();
+        function getMusicElement(param, value) {
+            const elements = {
+                temp: { low: { instrument: 'deep cello drones and sparse low-frequency pulses', desc: 'cold earth tones' }, mid: { instrument: 'warm woodwinds and gentle string arrangements', desc: 'temperate climate' }, high: { instrument: 'bright, energetic high-frequency harmonics', desc: 'heat shimmer' } },
+                moisture: { low: { instrument: 'crackling, dry percussion resembling wind through dead leaves', desc: 'arid texture' }, mid: { instrument: 'soft piano arpeggios with subtle water droplet sounds', desc: 'balanced moisture' }, high: { instrument: 'flowing water sounds, lush string pads, and gentle rain textures', desc: 'saturated soundscape' } },
+                ec: { low: { instrument: 'minimal, sparse instrumentation', desc: 'saline-depleted environment' }, mid: { instrument: 'clean, balanced acoustic arrangement', desc: 'optimal conductivity' }, high: { instrument: 'electrifying synth textures, pulsing frequencies', desc: 'high mineral content' } },
+                nitrogen: { low: { instrument: 'descending melodic lines', desc: 'nitrogen-deficient' }, mid: { instrument: 'stable, grounded harmonic progressions', desc: 'healthy nitrogen' }, high: { instrument: 'lush, flourishing melodic phrases', desc: 'nitrogen-rich growth' } },
+                phosphorus: { low: { instrument: 'slow, weakening rhythmic patterns', desc: 'phosphorus-depleted' }, mid: { instrument: 'steady, reliable beat patterns', desc: 'adequate phosphorus' }, high: { instrument: 'bright, energetic acoustic guitars and fast high-frequency glockenspiel arpeggios', desc: 'phosphorus-surplus' } },
+                potassium: { low: { instrument: 'fading, diminishing tones', desc: 'potassium-deficient' }, mid: { instrument: 'full, resonant bass notes', desc: 'optimal potassium' }, high: { instrument: 'powerful, dynamic low-end presence', desc: 'potassium-abundant' } }
+            };
+            const ranges = { temp: { low: 15, high: 35 }, moisture: { low: 30, high: 70 }, ec: { low: 0.5, high: 3.5 }, nitrogen: { low: 30, high: 150 }, phosphorus: { low: 15, high: 60 }, potassium: { low: 100, high: 300 } };
+            const range = ranges[param];
+            let level = value < range.low ? 'low' : value > range.high ? 'high' : 'mid';
+            return elements[param][level];
         }
 
-        function selectPitch(pitch, btn) {
-            currentPitch = pitch;
-            document.querySelectorAll('#pitchGrid .select-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            updatePreview();
-        }
+        function generatePrompt() {
+            const { temp, moisture, ec, nitrogen, phosphorus, potassium } = soilData;
+            const tempEl = getMusicElement('temp', temp);
+            const moistureEl = getMusicElement('moisture', moisture);
+            const ecEl = getMusicElement('ec', ec);
+            const nitrogenEl = getMusicElement('nitrogen', nitrogen);
+            const phosphorusEl = getMusicElement('phosphorus', phosphorus);
+            const potassiumEl = getMusicElement('potassium', potassium);
 
-        function updatePreview() {
-            const bpm = document.getElementById('bpm').value;
-            const duration = document.getElementById('duration').value;
-            const minutes = Math.floor(duration / 60);
-            const seconds = duration % 60;
-            let durationText = '';
-            if (minutes > 0 && seconds > 0) {
-                durationText = minutes + '分' + seconds + '秒';
-            } else if (minutes > 0) {
-                durationText = minutes + '分钟';
+            let styleDesc = { documentary: 'Professional nature documentary soundtrack, progressive acoustic structure.', ambient: 'Ambient soundscape with organic textures and evolving atmospheric pads.', cinematic: 'Epic cinematic orchestral score with dramatic dynamics and emotional depth.', minimal: 'Minimalist acoustic composition with sparse instrumentation and contemplative silence.' }[currentStyle];
+
+            let prompt = styleDesc + ' ';
+            const extremes = [];
+            if (temp > 35 || temp < 15) extremes.push(tempEl);
+            if (moisture > 70) extremes.push(moistureEl);
+            if (phosphorus > 60) extremes.push(phosphorusEl);
+            
+            if (extremes.length > 0) {
+                prompt += `Opens with ${extremes[0].instrument} (representing ${extremes[0].desc}). `;
             } else {
-                durationText = seconds + '秒';
+                prompt += `Begins with ${tempEl.instrument} transitioning into ${moistureEl.instrument}. `;
             }
 
-            const text = `Pure instrumental music, ${bpm} BPM, ${currentMood}情绪, ${currentInstrument}主奏, ${currentPitch}区域, ${durationText}时长`;
-            document.getElementById('previewText').textContent = text;
+            prompt += `At mid-point, introduces ${nitrogenEl.instrument} and ${potassiumEl.instrument} (representing ${nitrogenEl.desc} and ${potassiumEl.desc}). `;
+            prompt += `The ${ecEl.instrument}, creating a ${ecEl.desc}. `;
+            prompt += `Clean mix, cinematic, grounded, earthy texture. Soil composition: ${temp}°C temperature, ${moisture}% moisture, ${ec.toFixed(1)} mS/cm conductivity, ${nitrogen}mg/kg N, ${phosphorus}mg/kg P, ${potassium}mg/kg K.`;
+
+            document.getElementById('promptOutput').textContent = prompt;
+        }
+
+        function resetParams() {
+            soilData = { temp: 25, moisture: 50, ec: 2.0, nitrogen: 50, phosphorus: 30, potassium: 150 };
+            ['temp', 'moisture', 'ec', 'nitrogen', 'phosphorus', 'potassium'].forEach(param => {
+                document.getElementById(param).value = soilData[param];
+                document.getElementById(param + 'Input').value = soilData[param];
+                document.getElementById(param + 'Value').textContent = formatValue(param, soilData[param]);
+            });
+            document.getElementById('promptOutput').textContent = 'Professional nature documentary soundtrack with progressive acoustic structure. Your soil data will be transformed into a unique musical narrative...';
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data = file.name.endsWith('.json') ? JSON.parse(e.target.result) : parseCSV(e.target.result);
+                    if (data) { applySoilData(data); showFileInfo(file.name, data); }
+                } catch (error) { alert('文件格式错误，请上传正确的 CSV 或 JSON 文件'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            const values = lines[1].split(',').map(v => parseFloat(v.trim()));
+            const data = {};
+            headers.forEach((header, index) => {
+                if (header.includes('temp')) data.temp = values[index];
+                else if (header.includes('moisture')) data.moisture = values[index];
+                else if (header.includes('ec') || header.includes('conductivity')) data.ec = values[index];
+                else if (header.includes('nitrogen') || header === 'n') data.nitrogen = values[index];
+                else if (header.includes('phosphorus') || header === 'p') data.phosphorus = values[index];
+                else if (header.includes('potassium') || header === 'k') data.potassium = values[index];
+            });
+            return data;
+        }
+
+        function applySoilData(data) {
+            ['temp', 'moisture', 'ec', 'nitrogen', 'phosphorus', 'potassium'].forEach(param => {
+                if (data[param] !== undefined) {
+                    soilData[param] = data[param];
+                    document.getElementById(param).value = data[param];
+                    document.getElementById(param + 'Input').value = data[param];
+                    document.getElementById(param + 'Value').textContent = formatValue(param, data[param]);
+                }
+            });
+        }
+
+        function showFileInfo(filename, data) {
+            const infoDiv = document.getElementById('fileInfo');
+            const contentDiv = document.getElementById('fileInfoContent');
+            let content = `<strong>文件名:</strong> ${filename}<br><strong>已导入数据:</strong><br>`;
+            ['temp', 'moisture', 'ec', 'nitrogen', 'phosphorus', 'potassium'].forEach(param => {
+                if (data[param] !== undefined) content += `• ${param}: ${data[param]}<br>`;
+            });
+            contentDiv.innerHTML = content;
+            infoDiv.classList.add('show');
         }
 
         function copyToClipboard() {
-            const text = document.getElementById('previewText').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast();
-            }).catch(err => {
-                // Fallback for older browsers
+            const text = document.getElementById('promptOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => showToast()).catch(() => {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -386,10 +349,10 @@
         function showToast() {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
+
+        generatePrompt();
     </script>
 </body>
 </html>
