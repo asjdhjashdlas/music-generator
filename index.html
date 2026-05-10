@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 音乐参数生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .card {
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .param-group {
+            margin-bottom: 25px;
+        }
+
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .param-label h3 {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+        }
+
+        .param-value {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+            border: 3px solid #667eea;
+        }
+
+        .select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .select-btn {
+            padding: 12px 16px;
+            border: 2px solid #404060;
+            border-radius: 10px;
+            background: rgba(40, 40, 60, 0.8);
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .select-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .select-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .preview-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(20, 20, 40, 0.9);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .preview-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .preview-content {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .instructions {
+            background: rgba(40, 60, 80, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #b0b0b0;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 音乐参数生成器</h1>
+        
+        <div class="card">
+            <div class="instructions">
+                <h4>📋 使用说明</h4>
+                <ol>
+                    <li>调整下方参数（音乐风格、情绪等）</li>
+                    <li>点击"复制生成指令"按钮</li>
+                    <li>打开 <a href="https://suno.ai" target="_blank" style="color:#667eea;">suno.ai</a> 并粘贴到输入框</li>
+                </ol>
+            </div>
+
+            <!-- BPM -->
+            <div class="param-group">
+                <div class="param-label">
+                    <h3>🎵 节拍速度 (BPM)</h3>
+                    <span class="param-value" id="bpmValue">120 BPM</span>
+                </div>
+                <input type="range" id="bpm" min="60" max="200" value="120" oninput="updateBPM()">
+            </div>
+
+            <!-- 情绪 -->
+            <div class="param-group">
+                <div class="param-label">
+                    <h3>🎭 音乐情绪</h3>
+                </div>
+                <div class="select-grid" id="moodGrid">
+                    <button class="select-btn active" onclick="selectMood('欢快', this)">😊 欢快</button>
+                    <button class="select-btn" onclick="selectMood('平静', this)">😌 平静</button>
+                    <button class="select-btn" onclick="selectMood('悲伤', this)">😢 悲伤</button>
+                    <button class="select-btn" onclick="selectMood('浪漫', this)">💕 浪漫</button>
+                    <button class="select-btn" onclick="selectMood('紧张', this)">😰 紧张</button>
+                    <button class="select-btn" onclick="selectMood('激励', this)">💪 激励</button>
+                    <button class="select-btn" onclick="selectMood('神秘', this)">🔮 神秘</button>
+                    <button class="select-btn" onclick="selectMood('梦幻', this)">✨ 梦幻</button>
+                </div>
+            </div>
+
+            <!-- 乐器 -->
+            <div class="param-group">
+                <div class="param-label">
+                    <h3>🎸 主要乐器</h3>
+                </div>
+                <div class="select-grid" id="instrumentGrid">
+                    <button class="select-btn active" onclick="selectInstrument('钢琴', this)">🎹 钢琴</button>
+                    <button class="select-btn" onclick="selectInstrument('吉他', this)">🎸 吉他</button>
+                    <button class="select-btn" onclick="selectInstrument('电子', this)">🎛️ 电子</button>
+                    <button class="select-btn" onclick="selectInstrument('小提琴', this)">🎻 小提琴</button>
+                    <button class="select-btn" onclick="selectInstrument('鼓', this)">🥁 鼓</button>
+                    <button class="select-btn" onclick="selectInstrument('管弦乐', this)">🎼 管弦乐</button>
+                    <button class="select-btn" onclick="selectInstrument('混合', this)">🎹+🎸 混合</button>
+                    <button class="select-btn" onclick="selectInstrument('自然', this)">🍃 自然</button>
+                </div>
+            </div>
+
+            <!-- 时长 -->
+            <div class="param-group">
+                <div class="param-label">
+                    <h3>⏱️ 音乐时长</h3>
+                    <span class="param-value" id="durationValue">1 分钟</span>
+                </div>
+                <input type="range" id="duration" min="15" max="180" value="60" step="15" oninput="updateDuration()">
+            </div>
+
+            <!-- 音高 -->
+            <div class="param-group">
+                <div class="param-label">
+                    <h3>🎤 音高范围</h3>
+                </div>
+                <div class="select-grid" id="pitchGrid">
+                    <button class="select-btn" onclick="selectPitch('低音', this)">🔈 低音</button>
+                    <button class="select-btn active" onclick="selectPitch('中音', this)">🔊 中音</button>
+                    <button class="select-btn" onclick="selectPitch('高音', this)">🔉 高音</button>
+                    <button class="select-btn" onclick="selectPitch('超高音', this)">🎤 超高音</button>
+                </div>
+            </div>
+
+            <!-- 预览 -->
+            <div class="preview-box">
+                <div class="preview-title">📝 生成指令预览</div>
+                <div class="preview-content" id="previewText">
+                    Pure instrumental music, 120 BPM, 欢快情绪, 钢琴主奏, 中音区域, 1分钟时长
+                </div>
+            </div>
+
+            <!-- 复制按钮 -->
+            <button class="copy-btn" onclick="copyToClipboard()">
+                📋 复制生成指令
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">✅ 已复制到剪贴板！</div>
+
+    <script>
+        let currentMood = '欢快';
+        let currentInstrument = '钢琴';
+        let currentPitch = '中音';
+
+        function updateBPM() {
+            const bpm = document.getElementById('bpm').value;
+            document.getElementById('bpmValue').textContent = bpm + ' BPM';
+            updatePreview();
+        }
+
+        function updateDuration() {
+            const duration = document.getElementById('duration').value;
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            let displayText = '';
+            if (minutes > 0 && seconds > 0) {
+                displayText = minutes + ' 分 ' + seconds + ' 秒';
+            } else if (minutes > 0) {
+                displayText = minutes + ' 分钟';
+            } else {
+                displayText = seconds + ' 秒';
+            }
+            document.getElementById('durationValue').textContent = displayText;
+            updatePreview();
+        }
+
+        function selectMood(mood, btn) {
+            currentMood = mood;
+            document.querySelectorAll('#moodGrid .select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updatePreview();
+        }
+
+        function selectInstrument(instrument, btn) {
+            currentInstrument = instrument;
+            document.querySelectorAll('#instrumentGrid .select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updatePreview();
+        }
+
+        function selectPitch(pitch, btn) {
+            currentPitch = pitch;
+            document.querySelectorAll('#pitchGrid .select-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const bpm = document.getElementById('bpm').value;
+            const duration = document.getElementById('duration').value;
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            let durationText = '';
+            if (minutes > 0 && seconds > 0) {
+                durationText = minutes + '分' + seconds + '秒';
+            } else if (minutes > 0) {
+                durationText = minutes + '分钟';
+            } else {
+                durationText = seconds + '秒';
+            }
+
+            const text = `Pure instrumental music, ${bpm} BPM, ${currentMood}情绪, ${currentInstrument}主奏, ${currentPitch}区域, ${durationText}时长`;
+            document.getElementById('previewText').textContent = text;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('previewText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(err => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
